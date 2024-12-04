@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-api
+  labels:
+    app: express-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express-api
+  template:
+    metadata:
+      labels:
+        app: express-api
+    spec:
+      containers:
+      - name: express-api
+        image: mohitech/express-api:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5050
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/mern_db
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-api
+spec:
+  selector:
+    app: express-api
+  ports:
+    - protocol: TCP
+      port: 5050
+      targetPort: 5050
